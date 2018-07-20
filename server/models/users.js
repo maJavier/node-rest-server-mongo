@@ -1,5 +1,12 @@
+// Imports
 const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
+
+
+let rolesValids = {
+    values: ['ADMIN_ROL', 'USER_ROL'],
+    message: '{VALUE} no es un rol valido'
+};
 
 let Schema = mongoose.Schema;
 
@@ -23,7 +30,8 @@ let userSchema = new Schema({
     },
     role: {
         type: String,
-        default: true
+        default: 'USER_ROL',
+        enum: rolesValids
     },
     estado: {
         type: Boolean,
@@ -35,6 +43,17 @@ let userSchema = new Schema({
     }
 
 });
+
+userSchema.methods.toJSON = function() {
+
+    let usuario = this;
+    let userObject = usuario.toObject();
+    delete userObject.password;
+
+    return userObject;
+
+};
+
 
 userSchema.plugin( uniqueValidator, { message: ' {PATH} already registred ' })
 
